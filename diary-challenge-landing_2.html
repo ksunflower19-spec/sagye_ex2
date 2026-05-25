@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>다이어리 챌린지 — 3주의 기록</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --ink: #1a1410;
+    --ink-light: #4a3f35;
+    --cream: #faf6ef;
+    --paper: #f4ede0;
+    --paper-dark: #e8dcc8;
+    --amber: #c8843a;
+    --amber-light: #e8a855;
+    --amber-pale: #fdf0dc;
+    --rose: #b85c5c;
+    --sage: #5a7a5a;
+    --sage-light: #7aa07a;
+    --border: rgba(26,20,16,0.12);
+    --shadow: rgba(26,20,16,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* ─── 노이즈 텍스처 오버레이 ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  /* ─── 네비게이션 ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 3rem;
+    background: rgba(250,246,239,0.9);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.04em;
+    color: var(--amber);
+    font-style: italic;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    color: var(--ink-light);
+    transition: color 0.2s;
+    font-weight: 500;
+  }
+
+  .nav-links a:hover { color: var(--amber); }
+
+  /* ─── 히어로 섹션 ─── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 4rem 4rem 6rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    font-weight: 700;
+    margin-bottom: 2rem;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 2rem;
+    height: 1px;
+    background: var(--amber);
+  }
+
+  .hero-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(2.8rem, 4vw, 4.2rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--amber);
+    font-family: 'Playfair Display', serif;
+  }
+
+  .hero-subtitle {
+    font-size: 1.05rem;
+    color: var(--ink-light);
+    line-height: 1.8;
+    margin-bottom: 3rem;
+    max-width: 38ch;
+    font-weight: 300;
+  }
+
+  .hero-cta-group {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .btn-primary {
+    background: var(--amber);
+    color: white;
+    padding: 1rem 2.5rem;
+    border: none;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0);
+    transition: background 0.2s;
+  }
+
+  .btn-primary:hover {
+    background: #b5742e;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(200,132,58,0.3);
+  }
+
+  .btn-secondary {
+    font-size: 0.82rem;
+    color: var(--ink-light);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.2s;
+  }
+
+  .btn-secondary:hover { color: var(--amber); }
+
+  .btn-secondary::after {
+    content: '↓';
+    font-size: 1rem;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    margin-top: 3.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .stat-item { text-align: left; }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--amber);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+    color: var(--ink-light);
+    letter-spacing: 0.06em;
+    margin-top: 0.3rem;
+    font-weight: 500;
+  }
+
+  /* ─── 히어로 오른쪽: 다이어리 비주얼 ─── */
+  .hero-right {
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .diary-visual {
+    position: relative;
+    width: 320px;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-12px) rotate(-1deg); }
+  }
+
+  .diary-book {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: white;
+    border-radius: 4px 16px 16px 4px;
+    box-shadow:
+      -8px 0 0 var(--paper-dark),
+      -12px 4px 0 #d4c8b4,
+      4px 8px 40px rgba(26,20,16,0.2),
+      inset 0 0 0 1px rgba(26,20,16,0.06);
+    padding: 2.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .diary-book::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 6px;
+    background: var(--amber);
+  }
+
+  .diary-date {
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--amber);
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+  }
+
+  .diary-heading {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+
+  .diary-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .diary-line {
+    height: 1px;
+    background: var(--paper-dark);
+    position: relative;
+  }
+
+  .diary-line.text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: -0.7rem;
+    left: 0;
+    font-size: 0.78rem;
+    color: var(--ink-light);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 300;
+    white-space: nowrap;
+  }
+
+  .diary-line.text.short::after {
+    width: 60%;
+    overflow: hidden;
+  }
+
+  .diary-deco {
+    position: absolute;
+    right: 1.5rem;
+    bottom: 2rem;
+    width: 48px;
+    height: 48px;
+    opacity: 0.12;
+  }
+
+  .hero-bg-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    font-family: 'Playfair Display', serif;
+    font-size: 22vw;
+    font-style: italic;
+    color: var(--paper-dark);
+    opacity: 0.35;
+    pointer-events: none;
+    white-space: nowrap;
+    user-select: none;
+    z-index: 1;
+  }
+
+  /* ─── 소개 섹션 ─── */
+  .intro-section {
+    background: var(--ink);
+    color: white;
+    padding: 7rem 6rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .intro-section::before {
+    content: '"';
+    position: absolute;
+    top: -2rem;
+    left: 4rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 20rem;
+    color: rgba(255,255,255,0.03);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .intro-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .section-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber-light);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .section-eyebrow::before {
+    content: '';
+    display: block;
+    width: 2rem;
+    height: 1px;
+    background: var(--amber-light);
+  }
+
+  .intro-quote {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+    font-weight: 300;
+    line-height: 1.7;
+    letter-spacing: -0.01em;
+    margin-bottom: 2rem;
+    color: rgba(255,255,255,0.92);
+  }
+
+  .intro-quote strong {
+    color: var(--amber-light);
+    font-weight: 600;
+  }
+
+  .intro-body {
+    font-size: 0.95rem;
+    line-height: 1.9;
+    color: rgba(255,255,255,0.6);
+    max-width: 60ch;
+    font-weight: 300;
+  }
+
+  /* ─── 커리큘럼 섹션 ─── */
+  .curriculum-section {
+    padding: 8rem 6rem;
+    background: var(--cream);
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 5rem;
+  }
+
+  .section-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .section-desc {
+    font-size: 0.95rem;
+    color: var(--ink-light);
+    max-width: 48ch;
+    margin: 0 auto;
+    line-height: 1.8;
+    font-weight: 300;
+  }
+
+  .weeks-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    max-width: 1100px;
+    margin: 0 auto;
+    border: 1px solid var(--border);
+  }
+
+  .week-card {
+    padding: 3rem 2.5rem;
+    border-right: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+
+  .week-card:last-child { border-right: none; }
+
+  .week-card:hover { background: var(--paper); }
+
+  .week-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .week-card:nth-child(1)::before { background: var(--sage); }
+  .week-card:nth-child(2)::before { background: var(--amber); }
+  .week-card:nth-child(3)::before { background: var(--rose); }
+
+  .week-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 400;
+    margin-bottom: 0.8rem;
+  }
+
+  .week-card:nth-child(1) .week-num { color: var(--sage); }
+  .week-card:nth-child(2) .week-num { color: var(--amber); }
+  .week-card:nth-child(3) .week-num { color: var(--rose); }
+
+  .week-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+  }
+
+  .week-desc {
+    font-size: 0.88rem;
+    color: var(--ink-light);
+    line-height: 1.8;
+    margin-bottom: 2rem;
+    font-weight: 300;
+  }
+
+  .daily-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .daily-list li {
+    font-size: 0.8rem;
+    color: var(--ink-light);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 400;
+  }
+
+  .daily-list li::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .week-card:nth-child(1) .daily-list li::before { background: var(--sage); }
+  .week-card:nth-child(2) .daily-list li::before { background: var(--amber); }
+  .week-card:nth-child(3) .daily-list li::before { background: var(--rose); }
+
+  .week-big-num {
+    position: absolute;
+    bottom: -1.5rem;
+    right: 1rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 8rem;
+    font-weight: 700;
+    line-height: 1;
+    opacity: 0.05;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* ─── 혜택 섹션 ─── */
+  .benefits-section {
+    padding: 8rem 6rem;
+    background: var(--paper);
+  }
+
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    align-items: center;
+  }
+
+  .benefits-visual {
+    position: relative;
+  }
+
+  .benefit-card-stack {
+    position: relative;
+    height: 380px;
+  }
+
+  .b-card {
+    position: absolute;
+    background: white;
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px var(--shadow);
+    width: 280px;
+  }
+
+  .b-card:nth-child(1) { top: 0; left: 0; transform: rotate(-3deg); z-index: 1; }
+  .b-card:nth-child(2) { top: 80px; left: 40px; transform: rotate(1deg); z-index: 2; }
+  .b-card:nth-child(3) { top: 160px; left: 20px; transform: rotate(-1.5deg); z-index: 3; }
+
+  .b-card-date {
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--amber);
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+
+  .b-card-text {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--ink);
+    font-weight: 300;
+  }
+
+  .benefits-content {}
+
+  .benefits-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+    margin-top: 2.5rem;
+  }
+
+  .benefit-item {
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+  }
+
+  .benefit-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--amber-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  .benefit-text h4 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+
+  .benefit-text p {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* ─── 후기 섹션 ─── */
+  .testimonials-section {
+    padding: 8rem 6rem;
+    background: var(--cream);
+    overflow: hidden;
+  }
+
+  .testimonials-track {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    max-width: 1100px;
+    margin: 4rem auto 0;
+  }
+
+  .testimonial-card {
+    background: white;
+    border: 1px solid var(--border);
+    padding: 2rem;
+    position: relative;
+  }
+
+  .testimonial-card::before {
+    content: '"';
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    color: var(--amber);
+    opacity: 0.3;
+    line-height: 1;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .testimonial-text {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.92rem;
+    line-height: 1.8;
+    color: var(--ink);
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+  }
+
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+  }
+
+  .author-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .author-avatar.a1 { background: var(--sage); }
+  .author-avatar.a2 { background: var(--amber); }
+  .author-avatar.a3 { background: var(--rose); }
+
+  .author-name {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .author-info {
+    font-size: 0.72rem;
+    color: var(--ink-light);
+    font-weight: 300;
+  }
+
+  /* ─── 참가 안내 ─── */
+  .join-section {
+    padding: 8rem 6rem;
+    background: var(--paper);
+  }
+
+  .join-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .join-content .section-title { text-align: left; }
+
+  .join-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .join-detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.88rem;
+  }
+
+  .join-detail-item .label {
+    color: var(--ink-light);
+    font-weight: 400;
+  }
+
+  .join-detail-item .value {
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .join-form {
+    background: white;
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+  }
+
+  .join-form h3 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+
+  .join-form p {
+    font-size: 0.82rem;
+    color: var(--ink-light);
+    margin-bottom: 1.8rem;
+    font-weight: 300;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .form-group label {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--ink-light);
+  }
+
+  .form-group input, .form-group select {
+    border: 1px solid var(--border);
+    padding: 0.75rem 1rem;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 0.88rem;
+    background: var(--cream);
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    border-radius: 0;
+  }
+
+  .form-group input:focus, .form-group select:focus {
+    border-color: var(--amber);
+  }
+
+  .form-submit {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 1rem;
+    background: var(--amber);
+    color: white;
+    border: none;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 0;
+  }
+
+  .form-submit:hover {
+    background: #b5742e;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(200,132,58,0.25);
+  }
+
+  .form-note {
+    font-size: 0.72rem;
+    color: var(--ink-light);
+    text-align: center;
+    margin-top: 1rem;
+    font-weight: 300;
+  }
+
+  /* ─── FAQ ─── */
+  .faq-section {
+    padding: 8rem 6rem;
+    background: var(--cream);
+  }
+
+  .faq-inner {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .faq-list {
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .faq-item {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 0;
+  }
+
+  .faq-item:last-child { border-bottom: 1px solid var(--border); }
+
+  .faq-q {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    color: var(--ink);
+    user-select: none;
+    transition: color 0.2s;
+  }
+
+  .faq-q:hover { color: var(--amber); }
+
+  .faq-toggle {
+    font-size: 1.2rem;
+    font-weight: 300;
+    color: var(--amber);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+
+  .faq-a {
+    font-size: 0.88rem;
+    color: var(--ink-light);
+    line-height: 1.8;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, padding-top 0.35s ease;
+    font-weight: 300;
+  }
+
+  .faq-item.open .faq-a {
+    max-height: 300px;
+    padding-top: 0.8rem;
+  }
+
+  .faq-item.open .faq-toggle {
+    transform: rotate(45deg);
+  }
+
+  /* ─── 푸터 ─── */
+  footer {
+    background: var(--ink);
+    color: rgba(255,255,255,0.5);
+    padding: 3rem 6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--amber-light);
+    font-style: italic;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.4);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--amber-light); }
+
+  .footer-copy {
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* ─── 애니메이션 ─── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ─── 반응형 ─── */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .hero-left { padding: 7rem 1.5rem 4rem; }
+    .intro-section,
+    .curriculum-section,
+    .benefits-section,
+    .testimonials-section,
+    .join-section,
+    .faq-section { padding: 4rem 1.5rem; }
+    .weeks-grid { grid-template-columns: 1fr; }
+    .week-card { border-right: none; border-bottom: 1px solid var(--border); }
+    .benefits-grid { grid-template-columns: 1fr; }
+    .benefit-card-stack { display: none; }
+    .testimonials-track { grid-template-columns: 1fr; }
+    .join-inner { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 1.5rem; text-align: center; padding: 2rem 1.5rem; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 네비게이션 -->
+<nav>
+  <div class="nav-logo">Dear Diary ✦</div>
+  <ul class="nav-links">
+    <li><a href="#curriculum">커리큘럼</a></li>
+    <li><a href="#benefits">혜택</a></li>
+    <li><a href="#reviews">후기</a></li>
+    <li><a href="#join">참가하기</a></li>
+  </ul>
+</nav>
+
+<!-- 히어로 -->
+<section class="hero">
+  <div class="hero-left fade-in">
+    <div class="hero-tag">3주 챌린지 · 21일의 기록</div>
+    <h1 class="hero-title">
+      하루 한 장,<br>
+      <em>나를 쓰는</em><br>
+      시간
+    </h1>
+    <p class="hero-subtitle">
+      글씨가 예쁘지 않아도 괜찮아요.<br>
+      매일 쓰는 것이 전부입니다. 21일이 지나면<br>
+      당신은 달라져 있을 거예요.
+    </p>
+    <div class="hero-cta-group">
+      <a href="#join" class="btn-primary">지금 신청하기</a>
+      <a href="#curriculum" class="btn-secondary">커리큘럼 보기</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">2,400+</div>
+        <div class="stat-label">누적 참가자</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">21일</div>
+        <div class="stat-label">챌린지 기간</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">94%</div>
+        <div class="stat-label">완주율</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-bg-text">Diary</div>
+    <div class="diary-visual">
+      <div class="diary-book">
+        <div class="diary-date">Day 07 · 첫째 주</div>
+        <div class="diary-heading">오늘 나에게 가장<br>소중한 한 가지는</div>
+        <div class="diary-lines">
+          <div class="diary-line text" data-text="아침에 마신 따뜻한 커피 한 잔."></div>
+          <div class="diary-line"></div>
+          <div class="diary-line text" data-text="창밖으로 보이는 나뭇잎들이 흔들리는 모습."></div>
+          <div class="diary-line"></div>
+          <div class="diary-line text short" data-text="오늘도 여기 있다는 것."></div>
+          <div class="diary-line"></div>
+          <div class="diary-line"></div>
+          <div class="diary-line"></div>
+          <div class="diary-line"></div>
+          <div class="diary-line"></div>
+        </div>
+        <svg class="diary-deco" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M24 4C24 4 14 14 14 24C14 29.52 18.48 34 24 34C29.52 34 34 29.52 34 24C34 14 24 4 24 4Z" fill="currentColor"/>
+          <path d="M24 34V44" stroke="currentColor" stroke-width="2"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 소개 -->
+<section class="intro-section">
+  <div class="intro-inner fade-in">
+    <div class="section-eyebrow">왜 다이어리인가요</div>
+    <p class="intro-quote">
+      당신의 하루는 이미 <strong>충분히 의미 있습니다.</strong><br>
+      다만 흘러가 버릴 뿐이에요.
+    </p>
+    <p class="intro-body">
+      다이어리 챌린지는 단순히 일기를 쓰는 훈련이 아닙니다. 21일 동안 매일 주어지는 질문과 글쓰기 프롬프트를 통해, 자신의 감정과 생각을 언어로 표현하는 능력을 키웁니다. 글을 잘 쓰지 못해도 괜찮아요. 그저 당신의 언어로, 오늘을 기록하면 됩니다.
+    </p>
+  </div>
+</section>
+
+<!-- 커리큘럼 -->
+<section class="curriculum-section" id="curriculum">
+  <div class="section-header fade-in">
+    <div class="section-eyebrow" style="justify-content: center;">3주 커리큘럼</div>
+    <h2 class="section-title">21일간의 여정</h2>
+    <p class="section-desc">매주 다른 주제로, 자신을 조금씩 더 깊이 들여다보는 시간입니다.</p>
+  </div>
+
+  <div class="weeks-grid fade-in">
+    <!-- Week 1 -->
+    <div class="week-card">
+      <div class="week-num">Week 01</div>
+      <h3 class="week-title">나를 발견하는<br>7일</h3>
+      <p class="week-desc">오늘 나는 어떤 사람인지, 무엇을 좋아하고 싫어하는지 천천히 살펴보는 시간입니다.</p>
+      <ul class="daily-list">
+        <li>감사한 것 3가지 적기</li>
+        <li>오늘의 감정 색깔로 표현하기</li>
+        <li>나에게 보내는 짧은 편지</li>
+        <li>좋아하는 것 목록 만들기</li>
+        <li>오늘 가장 집중했던 순간</li>
+        <li>버리고 싶은 습관 하나</li>
+        <li>Week 1 회고 쓰기</li>
+      </ul>
+      <div class="week-big-num">1</div>
+    </div>
+
+    <!-- Week 2 -->
+    <div class="week-card">
+      <div class="week-num">Week 02</div>
+      <h3 class="week-title">관계를 돌아보는<br>7일</h3>
+      <p class="week-desc">나와 연결된 사람들, 그리고 그 관계 속에서의 나를 기록합니다.</p>
+      <ul class="daily-list">
+        <li>고마운 사람에게 쓰는 편지</li>
+        <li>가장 편안한 사람과의 기억</li>
+        <li>관계에서 나의 역할 돌아보기</li>
+        <li>오해했던 순간과 화해</li>
+        <li>혼자이고 싶을 때 vs 함께이고 싶을 때</li>
+        <li>내가 받은 가장 큰 선물</li>
+        <li>Week 2 회고 쓰기</li>
+      </ul>
+      <div class="week-big-num">2</div>
+    </div>
+
+    <!-- Week 3 -->
+    <div class="week-card">
+      <div class="week-num">Week 03</div>
+      <h3 class="week-title">미래를 그려보는<br>7일</h3>
+      <p class="week-desc">지금의 나에서 출발해, 원하는 삶의 방향을 글로 그려보는 시간입니다.</p>
+      <ul class="daily-list">
+        <li>5년 후 나에게 보내는 편지</li>
+        <li>가장 두려운 것과 마주하기</li>
+        <li>나만의 성공 정의 내리기</li>
+        <li>꼭 이루고 싶은 것 3가지</li>
+        <li>오늘의 나를 응원하는 문장</li>
+        <li>챌린지 전과 후의 변화 기록</li>
+        <li>21일 완주 기념 편지 쓰기</li>
+      </ul>
+      <div class="week-big-num">3</div>
+    </div>
+  </div>
+</section>
+
+<!-- 혜택 -->
+<section class="benefits-section" id="benefits">
+  <div class="benefits-grid">
+    <div class="benefits-visual fade-in">
+      <div class="benefit-card-stack">
+        <div class="b-card">
+          <div class="b-card-date">Day 03 · 첫째 주</div>
+          <p class="b-card-text">오늘 내가 감사한 것 세 가지:<br>1. 창가에 쏟아지는 오후 햇살<br>2. 엄마가 보내준 짧은 문자<br>3. 오늘도 여기에 있다는 것</p>
+        </div>
+        <div class="b-card">
+          <div class="b-card-date">Day 11 · 둘째 주</div>
+          <p class="b-card-text">지수에게. 네가 그냥 옆에 있어줬던 게 얼마나 큰 힘이었는지, 그땐 말하지 못했어. 이제는 알 것 같아...</p>
+        </div>
+        <div class="b-card">
+          <div class="b-card-date">Day 19 · 셋째 주</div>
+          <p class="b-card-text">3주 전의 나에게: 두려워하지 마. 쓰다 보면 어느 순간, 네가 어떤 사람인지 보이기 시작할 거야.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="benefits-content fade-in">
+      <div class="section-eyebrow">참가하면 얻는 것</div>
+      <h2 class="section-title" style="text-align:left; font-size: 2rem;">챌린지가<br>드리는 것들</h2>
+      <ul class="benefits-list">
+        <li class="benefit-item">
+          <div class="benefit-icon">📝</div>
+          <div class="benefit-text">
+            <h4>21개의 글쓰기 프롬프트</h4>
+            <p>매일 아침 카카오톡으로 전달되는 오늘의 주제. 고민 없이 바로 쓸 수 있어요.</p>
+          </div>
+        </li>
+        <li class="benefit-item">
+          <div class="benefit-icon">💬</div>
+          <div class="benefit-text">
+            <h4>소규모 커뮤니티</h4>
+            <p>혼자가 아닙니다. 함께 쓰는 사람들과 오픈채팅방에서 응원을 나눠요.</p>
+          </div>
+        </li>
+        <li class="benefit-item">
+          <div class="benefit-icon">🎁</div>
+          <div class="benefit-text">
+            <h4>완주 특전</h4>
+            <p>21일 완주 시 디지털 다이어리 템플릿과 수료 배지를 드립니다.</p>
+          </div>
+        </li>
+        <li class="benefit-item">
+          <div class="benefit-icon">🔄</div>
+          <div class="benefit-text">
+            <h4>평생 수강 권한</h4>
+            <p>챌린지 종료 후에도 프롬프트와 자료를 언제든지 다시 볼 수 있습니다.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 후기 -->
+<section class="testimonials-section" id="reviews">
+  <div class="section-header fade-in">
+    <div class="section-eyebrow" style="justify-content: center;">참가자 후기</div>
+    <h2 class="section-title">그들이 남긴 말</h2>
+  </div>
+
+  <div class="testimonials-track fade-in">
+    <div class="testimonial-card">
+      <p class="testimonial-text">처음에는 '나 같은 사람이 일기를 쓸 수 있을까' 걱정했어요. 근데 21일이 지나고 나서, 제가 생각보다 할 말이 많은 사람이라는 걸 알았어요.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar a1">지은</div>
+        <div>
+          <div class="author-name">박지은</div>
+          <div class="author-info">직장인 · 3기 참가</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <p class="testimonial-text">매일 아침 프롬프트가 오는 게 그날의 시작이 됐어요. 커피 한 잔 들고 쓰는 15분이 하루 중 가장 나다운 시간이었습니다.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar a2">민준</div>
+        <div>
+          <div class="author-name">이민준</div>
+          <div class="author-info">프리랜서 디자이너 · 5기 참가</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <p class="testimonial-text">글쓰기가 치유가 된다는 말을 이제야 이해했어요. 3주 동안 저에게 참 많은 편지를 썼는데, 그게 다 저를 위한 거였더라고요.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar a3">수현</div>
+        <div>
+          <div class="author-name">최수현</div>
+          <div class="author-info">대학원생 · 2기 참가</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 참가하기 -->
+<section class="join-section" id="join">
+  <div class="join-inner">
+    <div class="join-content fade-in">
+      <div class="section-eyebrow">참가 안내</div>
+      <h2 class="section-title" style="font-size: 2rem;">함께 시작해요</h2>
+      <div class="join-details">
+        <div class="join-detail-item">
+          <span class="label">다음 기수 시작일</span>
+          <span class="value">2025년 7월 7일 (월)</span>
+        </div>
+        <div class="join-detail-item">
+          <span class="label">진행 방식</span>
+          <span class="value">카카오톡 오픈채팅</span>
+        </div>
+        <div class="join-detail-item">
+          <span class="label">모집 인원</span>
+          <span class="value">선착순 50명</span>
+        </div>
+        <div class="join-detail-item">
+          <span class="label">참가비</span>
+          <span class="value">29,000원</span>
+        </div>
+        <div class="join-detail-item">
+          <span class="label">소요 시간</span>
+          <span class="value">하루 10~20분</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="join-form fade-in">
+      <h3>신청하기</h3>
+      <p>아래 정보를 입력하시면 오픈 안내를 먼저 보내드려요.</p>
+      <div class="form-group">
+        <label>이름</label>
+        <input type="text" placeholder="홍길동">
+      </div>
+      <div class="form-group">
+        <label>연락처</label>
+        <input type="tel" placeholder="010-0000-0000">
+      </div>
+      <div class="form-group">
+        <label>이메일</label>
+        <input type="email" placeholder="hello@example.com">
+      </div>
+      <div class="form-group">
+        <label>신청 동기</label>
+        <select>
+          <option value="">선택해주세요</option>
+          <option>글쓰기 습관을 만들고 싶어요</option>
+          <option>나 자신을 더 알고 싶어요</option>
+          <option>매일 루틴이 필요해요</option>
+          <option>그냥 끌려서요</option>
+        </select>
+      </div>
+      <button class="form-submit" onclick="alert('신청이 완료되었습니다! 곧 안내 문자를 드릴게요 🌿')">신청 완료하기</button>
+      <p class="form-note">개인정보는 챌린지 안내 외의 용도로 사용되지 않습니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="faq-inner">
+    <div class="section-header fade-in">
+      <div class="section-eyebrow" style="justify-content: center;">자주 묻는 질문</div>
+      <h2 class="section-title">궁금한 것들</h2>
+    </div>
+
+    <div class="faq-list fade-in">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>글을 잘 못 써도 참가할 수 있나요?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-a">물론입니다. 이 챌린지는 글쓰기 실력을 키우는 과정이 아니에요. 맞춤법도, 문장 구조도 중요하지 않아요. 그저 오늘의 나를, 내 언어로 기록하는 것이 전부입니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>하루에 얼마나 써야 하나요?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-a">하루 10~20분이면 충분합니다. 프롬프트에 맞춰 짧게 몇 줄만 써도 괜찮아요. 더 쓰고 싶다면 얼마든지 써도 좋지만, 분량에 부담 갖지 않아도 돼요.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>노트에 써야 하나요, 디지털로 써야 하나요?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-a">둘 다 좋습니다. 손으로 쓰는 느낌을 선호하는 분도, 폰이나 노트북으로 쓰는 분도 있어요. 챌린지 참가 후 노션/굿노트 템플릿을 함께 드립니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>중간에 하루를 빠지면 어떻게 되나요?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-a">괜찮아요. 다음 날 이어 쓰면 됩니다. 완벽하게 21일을 채우는 것보다, 포기하지 않고 계속 돌아오는 것이 이 챌린지에서 더 중요합니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>환불 정책이 어떻게 되나요?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-a">시작일 전날까지는 전액 환불이 가능합니다. 시작 후에는 환불이 어렵지만, 다음 기수로 이월해 드릴 수 있습니다.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 푸터 -->
+<footer>
+  <div class="footer-logo">Dear Diary ✦</div>
+  <ul class="footer-links">
+    <li><a href="#">인스타그램</a></li>
+    <li><a href="#">카카오채널</a></li>
+    <li><a href="#">개인정보처리방침</a></li>
+    <li><a href="#">문의하기</a></li>
+  </ul>
+  <div class="footer-copy">© 2025 Dear Diary Challenge</div>
+</footer>
+
+<script>
+  function toggleFaq(el) {
+    const item = el.closest('.faq-item');
+    item.classList.toggle('open');
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
